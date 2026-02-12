@@ -1,13 +1,17 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { fade, scale } from "svelte/transition";
+  import { fade, fly } from "svelte/transition";
 
   async function sendTelegram(msg: string) {
-    await fetch("/api/notify", {
-      method: "POST",
-      body: JSON.stringify({ message: msg }),
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      await fetch("/api/notify", {
+        method: "POST",
+        body: JSON.stringify({ message: msg }),
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (e) {
+      console.error("Telegram error:", e);
+    }
   }
 
   let reportedNo = false;
@@ -16,6 +20,7 @@
   let attempts = 0;
   let isMoved = false;
 
+  // Siz xohlagan original matnlar
   const phrases = [
     "No",
     "Are you sure? gf 🤨",
@@ -29,14 +34,11 @@
   let currentPhrase = phrases[0];
   let isHidden = false;
 
-  const moveButton = (e: MouseEvent | TouchEvent) => {
-    // Mobil qurilmalarda default click eventni to'xtatish
+  const moveButton = (e: any) => {
     if (e) e.preventDefault();
-
     attempts++;
     isMoved = true;
 
-    // Birinchi marta "No" ni bosmoqchi bo'lganda xabar yuboramiz
     if (!reportedNo) {
       sendTelegram("🏃‍♀️ <b>This btch tried to say NO!</b>");
       reportedNo = true;
@@ -48,80 +50,59 @@
       return;
     }
 
-    // Tugmani ekran bo'ylab xavfsiz (ekrandan chiqib ketmaydigan) joyga ko'chirish
-    const randomX = Math.floor(Math.random() * 70) + 15; // 15% dan 85% gacha
-    const randomY = Math.floor(Math.random() * 70) + 15;
+    const randomX = Math.floor(Math.random() * 60) + 15; 
+    const randomY = Math.floor(Math.random() * 60) + 15;
     noButtonPos = { x: randomX, y: randomY };
 
-    // Matnni o'zgartirish
     if (attempts < phrases.length) {
       currentPhrase = phrases[attempts];
     }
-
-    // "Yes" tugmasini tajovuzkorona kattalashtirish
     yesButtonSize += 0.1;
   };
 
-
-    function handleYes(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement; }) {
-        goto("/celebrate");
-    }
+  function handleYes() {
+    sendTelegram("🎉 <b>FINALLY!</b> she said YES! ❤️");
+    goto("/celebrate");
+  }
 </script>
 
 <svelte:head>
-  <title>Will you be my Valentine? 💖</title>
+  <title>Valentine? 💖</title>
 </svelte:head>
-<div
-  class="min-h-screen w-full flex flex-col items-center justify-center bg-[#fff5f7] overflow-hidden relative p-6 text-center select-none"
->
-  <div class="absolute inset-0 pointer-events-none opacity-20">
-    <div class="absolute top-10 left-10 animate-pulse text-4xl">❤️</div>
-    <div class="absolute bottom-20 right-10 animate-bounce text-5xl">💖</div>
-    <div class="absolute top-1/2 left-5 animate-pulse text-3xl">✨</div>
+
+<div class="min-h-screen w-full flex flex-col items-center justify-center bg-[#1a1a1a] overflow-hidden relative p-4 text-center select-none font-sans">
+  
+  <div class="absolute inset-0 opacity-10 pointer-events-none">
+    <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#e11d48_0.5px,transparent_0.5px)] [background-size:16px_16px]"></div>
   </div>
 
   <div class="z-10 max-w-sm w-full" in:fade>
-    <div
-      class="mb-8 rounded-3xl overflow-hidden shadow-2xl border-4 border-white rotate-2 hover:rotate-0 transition-transform duration-500"
-    >
+    <div class="bg-[#262626] border border-[#333] p-1 shadow-2xl mb-8">
       <img
         src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3b2cwamV2YXJoNXptdXRndHNxczRsa3NzOHZtbGFhZTdpcHpjM3M5aCZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/T1TqR5TT62mVG/giphy.gif"
-        alt="Cute Valentine"
-        class="w-full h-auto"
+        alt="Valentine"
+        class="w-full h-48 object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-500"
       />
     </div>
 
-    <h1
-      class="text-3xl md:text-5xl font-black text-rose-600 mb-10 drop-shadow-sm"
-    >
+    <h1 class="text-3xl md:text-4xl font-black text-white mb-10 tracking-tighter uppercase italic">
       Will you be my <br />
-      <span class="text-red-500 underline decoration-wavy">Valentine?</span>
+      <span class="text-[#e11d48] not-italic">Valentine?</span>
     </h1>
 
-    <div
-      class="flex flex-col sm:flex-row items-center justify-center gap-8 relative min-h-[200px] mt-10"
-    >
+    <div class="flex flex-col items-center justify-center gap-6 relative min-h-[200px]">
+      
       <button
-        class="relative group overflow-hidden bg-gradient-to-r from-emerald-400 to-green-500 text-white font-black py-5 px-12 rounded-2xl
-           shadow-[0_0_20px_rgba(52,211,153,0.4)] hover:shadow-[0_0_40px_rgba(52,211,153,0.7)]
-           transition-all duration-300 active:scale-95 uppercase tracking-wider"
-        style="transform: scale({yesButtonSize}); z-index: 50;"
+        class="w-full py-4 px-8 bg-[#e11d48] hover:bg-[#fb7185] text-white font-black text-xl transition-all duration-200 active:scale-95 shadow-[4px_4px_0px_#4c0519] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 z-50 uppercase"
+        style="transform: scale({yesButtonSize});"
         onclick={handleYes}
       >
-        <span
-          class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"
-        ></span>
-
-        <span class="relative flex items-center gap-2">
-          Yes! <span class="text-2xl">💍</span>
-        </span>
+        Yes! 💍
       </button>
 
       {#if !isHidden}
         <button
-          class="bg-white/40 backdrop-blur-md text-rose-600 border-2 border-rose-200/50 font-bold py-4 px-10 rounded-2xl
-             shadow-[6px_6px_12px_#ebdadd,-6px_-6px_12px_#ffffff]
-             hover:bg-rose-50 hover:text-rose-700 transition-all duration-300 touch-none outline-none"
+          class="py-3 px-10 bg-white/40 backdrop-blur-md border border-[#444] text-[#333] font-bold hover:text-white hover:border-white transition-all duration-300 touch-none outline-none"
           style={isMoved
             ? `position: fixed; left: ${noButtonPos.x}%; top: ${noButtonPos.y}%; z-index: 40;`
             : "position: relative;"}
@@ -134,27 +115,22 @@
     </div>
 
     {#if attempts > 4}
-      <p
-        in:fade
-        class="mt-12 text-amber-400 font-bold tracking-tight text-lg"
-      >
-        LoL, she thinks she can reject me? some mfs trying to say NO! AGHHH
+      <p in:fade class="mt-12 text-[#e11d48] font-mono text-xs tracking-widest uppercase">
+        she thinks she can reject me? some mfs trying to say NO! AGHHH
       </p>
     {/if}
   </div>
 </div>
 
 <style>
-  @keyframes shimmer {
-    100% {
-      transform: translateX(100%);
-    }
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap');
+
   :global(body) {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #fff5f7;
-    font-family: "Poppins", sans-serif;
+    background-color: #1a1a1a;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  button {
+    -webkit-tap-highlight-color: transparent;
   }
 </style>

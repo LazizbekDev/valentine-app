@@ -1,33 +1,42 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { fade, scale } from 'svelte/transition';
+  import { fade, scale, fly } from 'svelte/transition';
   import confetti from 'canvas-confetti';
 
   let mounted = false;
 
   onMount(() => {
     mounted = true;
-    // vibrate when page loads (mobile only)
+    
+    // Mobil vibratsiya
     if (navigator.vibrate) {
-      navigator.vibrate(400);
+      navigator.vibrate([100, 50, 100]);
     }
     
-    // Bayramona konfetti otish
-    const duration = 15 * 1000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    // Premium konfetti effekti (yurakchalar bilan bo'lishi mumkin)
+    const duration = 10 * 1000;
+    const end = Date.now() + duration;
 
-    const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+    (function frame() {
+      confetti({
+        particleCount: 3,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#e11d48', '#fb7185', '#ffffff']
+      });
+      confetti({
+        particleCount: 3,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#e11d48', '#fb7185', '#ffffff']
+      });
 
-    const interval = setInterval(function() {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) return clearInterval(interval);
-
-      const particleCount = 50 * (timeLeft / duration);
-      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
-      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
-    }, 250);
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    }());
   });
 </script>
 
@@ -35,63 +44,79 @@
   <title>ily pro max gf 🫂</title>
 </svelte:head>
 
-<div class="min-h-screen w-full bg-gradient-to-br from-red-400 via-pink-400 to-rose-500 flex items-center justify-center p-6 overflow-hidden">
+<div class="min-h-screen w-full bg-[#0f172a] flex items-center justify-center p-6 overflow-hidden relative font-sans">
   
+  <div class="absolute inset-0 z-0">
+    <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-rose-900/40 blur-[120px] rounded-full"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-crimson-900/30 blur-[120px] rounded-full"></div>
+  </div>
+
   {#if mounted}
     <div 
-      in:scale={{ duration: 1000, delay: 200 }} 
-      class="max-w-md w-full bg-white/20 backdrop-blur-lg rounded-3xl p-8 border border-white/30 shadow-2xl text-center relative overflow-hidden"
+      in:fly={{ y: 20, duration: 1200 }} 
+      class="max-w-md w-full bg-white/[0.03] backdrop-blur-2xl rounded-[2rem] p-10 border border-white/10 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] text-center relative overflow-hidden"
     >
-      <div class="absolute inset-0 pointer-events-none opacity-20">
-        <div class="absolute top-10 left-10 animate-bounce">❤️</div>
-        <div class="absolute bottom-20 right-10 animate-pulse">💖</div>
-        <div class="absolute top-1/2 left-5 animate-bounce">✨</div>
+      <div class="absolute inset-0 pointer-events-none opacity-30">
+        <div class="absolute top-10 left-10 animate-pulse text-2xl">✨</div>
+        <div class="absolute bottom-10 right-10 animate-bounce text-2xl">🥂</div>
       </div>
 
       <div class="relative z-10">
-        <div class="text-7xl mt-6 animate-bounce">
-            <img src="gf.png" alt="GF" class="w-24 rounded mx-auto">
+        <div in:scale={{ delay: 400, duration: 800 }} class="relative inline-block mb-8">
+          <div class="absolute -inset-2 bg-gradient-to-tr from-rose-500 to-amber-500 rounded-2xl blur-md opacity-50 animate-pulse"></div>
+          <img src="gf.png" alt="GF" class="relative w-32 h-32 object-cover rounded-2xl border-2 border-white/20 shadow-2xl animate-bounce">
         </div>
         
-        <h1 class="text-4xl md:text-5xl font-black text-white mb-4 drop-shadow-md">
-          AGHH! I Knew It!
+        <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-rose-200 mb-6 tracking-tight">
+          AGHH! <br/> I Knew It!
         </h1>
         
-        <p class="text-xl text-white/90 font-medium leading-relaxed mb-8">
-        You've made my world so much brighter.
-        February 14th will be unforgettable for us! I love you so much gf 🌹
+        <p class="text-lg text-rose-100/80 font-medium leading-relaxed mb-10 px-2">
+          You've made my world so much brighter. <br/>
+          <span class="text-rose-400">Feb 14th</span> will be unforgettable for us. <br/>
+          I love you so much, gf. 🌹
         </p>
 
-        <div class="space-y-4">
-          <div class="h-1 w-full bg-white/30 rounded-full overflow-hidden">
-            <div class="h-full bg-white animate-[load_3s_ease-in-out_infinite]" style="width: 70%"></div>
+        <div class="bg-black/20 rounded-2xl p-6 border border-white/5 space-y-4">
+          <div class="flex justify-between text-xs uppercase tracking-[0.2em] text-rose-300/60 font-bold">
+            <span>Love Level</span>
+            <span>100%</span>
           </div>
-          <p class="text-sm text-white/80 italic">Relationship status: Locked & Loaded ❤️</p>
-          <p class="text-xs text-white/40">Go back to ig and text me haha</p>
+          <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-rose-500 to-rose-300 animate-[load_2s_ease-out_forwards]"></div>
+          </div>
+          <p class="text-xs text-white/40 tracking-wide uppercase">
+             Relationship status: <span class="text-rose-400">Locked & Loaded</span> ❤️
+          </p>
         </div>
 
-        <a 
-          href="/" 
-          class="inline-block mt-10 text-white/70 hover:text-white transition-colors underline decoration-dotted"
-        >
-          wanna say YES again? 😌
-        </a>
+        <div class="mt-10 flex flex-col gap-4">
+           <p class="text-sm text-rose-200/50 italic">Go back to IG and text me haha</p>
+           
+           <a 
+            href="/" 
+            class="text-xs text-white/20 hover:text-rose-400 transition-all duration-300 uppercase tracking-widest underline decoration-rose-500/30 underline-offset-8"
+          >
+            wanna say YES again? 😌
+          </a>
+        </div>
       </div>
     </div>
   {/if}
 </div>
 
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap');
+
   @keyframes load {
-    0% { transform: translateX(-100%); }
-    50% { transform: translateX(0%); }
-    100% { transform: translateX(100%); }
+    0% { width: 0%; }
+    100% { width: 100%; }
   }
 
-  /* Mobil uchun maxsus moslashuv (Custom Glass effect) */
   :global(body) {
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
+    background-color: #0f172a;
+    font-family: 'Space Grotesk', sans-serif;
   }
 </style>
