@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+    --font-sans-serif: 'Source Sans 3', sans-serif;
+    --font-monospace: 'Source Code Pro', monospace;
+    --font-handwriting: 'Kalam', cursive;
+    
+    /* Custom Colors */
+    --color-lavender-indigo: #8657E1;
+    --color-daisy-bush: #4714a5;
+    --color-whisper: #f9f4f9;
+    --color-pastel-purple: #b2a1bb;
+    --color-caribbean-green: #1cc6a0;
+    --color-scarlet: #f72f45;
+    --color-monsoon: #777878;
+    --color-gallery: #c0c0c0;
+    --color-fog: #decaec;
+}
